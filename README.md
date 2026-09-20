@@ -64,7 +64,7 @@ The Schematic and PCB were designed in KiCad.
 
 
 
-* **Enclosure:** 3D printing a case to mount the PCB to the top of my monitor, using Fusion 360.
+* **Enclosure:** 3D printing a case to mount the PCB to the top of my monitor, using Fusion 360
 
 
 
