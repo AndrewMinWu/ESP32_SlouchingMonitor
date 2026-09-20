@@ -11,39 +11,55 @@ root.withdraw()
 COM_PORT = 'COM3'
 BAUD_RATE = 115200
 DISTANCE_LIMIT = 375  # Distance threshold in mm
-TIME_LIMIT = 5  # Slouch duration in seconds before alert
+TIME_LIMIT = 5       # Slouch duration in seconds before alert
 
-# Connect to the ESP32
-ser = serial.Serial(COM_PORT, BAUD_RATE, timeout=1)
-ser.dtr = True
-ser.rts = True
+def connect_serial():
+    while True:
+        try:
+            ser = serial.Serial(COM_PORT, BAUD_RATE, timeout=1)
+            ser.dtr = True
+            ser.rts = True
+            print(f"Connected to {COM_PORT}...")
+            return ser
+        except Exception:
+            print(f"Waiting for {COM_PORT}...")
+            time.sleep(1)
 
+ser = connect_serial()
 slouch_start = None
 
-print(f"Listening on {COM_PORT}...")
-
 while True:
-    if ser.in_waiting > 0:
-        # Read and clean incoming line from ESP32
-        line = ser.readline().decode('utf-8', errors='ignore').strip()
-        
-        if "Distance:" in line:
-            try:
-                # Extract integer distance reading
-                distance = int(line.split()[1])
-            except (IndexError, ValueError):
-                continue
+    try:
+        if ser.in_waiting > 0:
+            # Read line from ESP32
+            line = ser.readline().decode('utf-8', errors='ignore').strip()
+            
+            if "Distance:" in line:
+                try:
+                    distance = int(line.split()[1])
+                except (IndexError, ValueError):
+                    continue
 
-            print(f"Distance: {distance} mm")
+                # Ignore out of range readings (8191 mm)
+                if distance > 2000:
+                    continue
 
-            # Posture check logic
-            if distance < DISTANCE_LIMIT:
-                if slouch_start is None:
-                    slouch_start = time.time()  # Start slouch timer
-                elif time.time() - slouch_start >= TIME_LIMIT:
-                    # Trigger popup window on top of all screens
-                    root.attributes('-topmost', True)
-                    messagebox.showwarning("Posture Alert", "You are sitting too close. Sit back!")
-                    slouch_start = None  # Reset timer after closing alert
-            else:
-                slouch_start = None  # Reset timer when posture is good
+                print(f"Distance: {distance} mm")
+
+                # Posture check logic
+                if distance < DISTANCE_LIMIT:
+                    if slouch_start is None:
+                        slouch_start = time.time()  # Start slouch timer
+                    elif time.time() - slouch_start >= TIME_LIMIT:
+                        root.attributes('-topmost', True)
+                        messagebox.showwarning("Posture Alert", "You are sitting too close. Sit back!")
+                        slouch_start = None  # Reset timer
+                else:
+                    slouch_start = None  # Reset timer on good posture
+
+    except (serial.SerialException, OSError):
+        # Handle USB disconnects without crashing
+        print("USB connection hiccuped. Reconnecting...")
+        slouch_start = None
+        time.sleep(1)
+        ser = connect_serial()
