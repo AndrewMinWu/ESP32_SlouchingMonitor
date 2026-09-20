@@ -33,7 +33,7 @@ Spending long hours working at a computer, I noticed my posture deteriorating as
    - Resistors (0805)
    - Push Buttons
 
-### PCB, Schematic, 3D Render
+### PCB, Schematic, Finished Board
 The Schematic and PCB were designed in KiCad.
 
 <img src="https://github.com/user-attachments/assets/d784b8aa-4701-43a2-b5ee-a8478c8316fc" alt="Schematic" width="100%"/>
