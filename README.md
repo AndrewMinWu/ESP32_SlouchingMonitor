@@ -58,13 +58,13 @@ The Schematic and PCB were designed in KiCad.
 **Short Demo**  
 <video src="https://github.com/user-attachments/assets/37af02e7-89a8-4d62-8e1a-ba28e2ae51d5" width="100%" controls></video>
 
-* **Assembly:** Hand-soldered all parts and tested the board with a multimeter (checking the 5V and 3v3 rails and ensuring no shorts) before flashing firmware.
+* **Assembly:** Hand-soldered all parts and tested the board with a multimeter (checking continuity with the implemented testpoints) before flashing firmware.
 
 ## Active Development
 
 
 
-* **Enclosure:** 3D printing a case to mount the PCB to the top of my monitor, using Fusion 360.
+* **Enclosure:** 3D printing a case to mount the PCB to the top of my monitor, using Fusion 360
 
 
 
